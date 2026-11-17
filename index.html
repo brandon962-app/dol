@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Degrees of Lewdity</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+      background: #12141a;
+      color: #eee;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+      padding: 24px 16px;
+    }
+    .card {
+      width: 100%;
+      max-width: 360px;
+      background: #1c1f28;
+      border: 1px solid #2c3140;
+      border-radius: 14px;
+      padding: 28px 22px 24px;
+    }
+    h1 {
+      margin: 0 0 18px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      text-align: center;
+    }
+    label.pwd-label {
+      display: block;
+      font-size: 0.92rem;
+      margin-bottom: 8px;
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 12px;
+      font-size: 16px;
+      border: 1px solid #3a4050;
+      border-radius: 8px;
+      background: #12141a;
+      color: #f2f2f2;
+      outline: none;
+    }
+    input[type="password"]:focus { border-color: #7aa2ff; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 14px 0 18px;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+    .row input { width: 18px; height: 18px; accent-color: #7aa2ff; }
+    button {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: 0;
+      border-radius: 8px;
+      background: #3d6dff;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.55; cursor: default; }
+    .err {
+      margin: 12px 0 0;
+      color: #ff6b6b;
+      font-size: 0.92rem;
+      text-align: center;
+      min-height: 1.2em;
+    }
+    .progress-wrap { margin-top: 16px; }
+    .bar {
+      height: 8px;
+      background: #2a2f3b;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: #7aa2ff;
+      transition: width .15s linear;
+    }
+    .ptext {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: #b8bfd0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Degrees of Lewdity</h1>
+    <form id="form" autocomplete="off">
+      <label class="pwd-label" for="pwd">請輸入密碼</label>
+      <input id="pwd" name="pwd" type="password" autocomplete="current-password" autofocus>
+      <label class="row">
+        <input id="remember" type="checkbox">
+        <span>在此裝置上記住</span>
+      </label>
+      <button id="btn" type="submit">進入</button>
+      <div id="err" class="err" hidden>密碼錯誤</div>
+    </form>
+    <div id="progress-wrap" class="progress-wrap" hidden>
+      <div class="bar"><span id="progress-bar"></span></div>
+      <div id="progress-text" class="ptext"></div>
+    </div>
+  </div>
+  <script>
+  (function () {
+    const META_URL = 'game.enc.json';
+    const STORE_KEY = 'dol-gate-v1';
+    const form = document.getElementById('form');
+    const pwd = document.getElementById('pwd');
+    const remember = document.getElementById('remember');
+    const err = document.getElementById('err');
+    const btn = document.getElementById('btn');
+    const progressWrap = document.getElementById('progress-wrap');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+
+    let cachedMeta = null;
+    let cachedCipher = null;
+
+    function setProgress(frac, text) {
+      progressWrap.hidden = false;
+      progressBar.style.width = Math.round(Math.max(0, Math.min(1, frac)) * 100) + '%';
+      progressText.textContent = text;
+    }
+
+    function showError() {
+      err.hidden = false;
+      err.textContent = '密碼錯誤';
+      progressWrap.hidden = true;
+      btn.disabled = false;
+      pwd.disabled = false;
+      remember.disabled = false;
+    }
+
+    function hideError() { err.hidden = true; }
+
+    function b64ToBytes(s) {
+      const bin = atob(s);
+      const out = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+      return out;
+    }
+
+    function bytesToB64(u8) {
+      let s = '';
+      const step = 0x8000;
+      for (let i = 0; i < u8.length; i += step) {
+        s += String.fromCharCode.apply(null, u8.subarray(i, i + step));
+      }
+      return btoa(s);
+    }
+
+    async function loadMeta() {
+      if (cachedMeta) return cachedMeta;
+      const res = await fetch(META_URL, { cache: 'no-cache' });
+      if (!res.ok) throw new Error('meta');
+      cachedMeta = await res.json();
+      return cachedMeta;
+    }
+
+    async function downloadCipher(meta) {
+      if (cachedCipher && cachedCipher.length === meta.cipherSize) return cachedCipher;
+      const total = meta.cipherSize;
+      const out = new Uint8Array(total);
+      let offset = 0;
+      for (const name of meta.files) {
+        const res = await fetch(name, { cache: 'force-cache' });
+        if (!res.ok || !res.body) throw new Error('chunk');
+        const reader = res.body.getReader();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          out.set(value, offset);
+          offset += value.length;
+          const pct = Math.round(100 * offset / total);
+          setProgress(0.8 * (offset / total), '下載中… ' + pct + '%');
+        }
+      }
+      if (offset !== total) throw new Error('size');
+      cachedCipher = out;
+      return out;
+    }
+
+    async function deriveKey(password, salt, iter) {
+      const material = await crypto.subtle.importKey(
+        'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']
+      );
+      const bits = await crypto.subtle.deriveBits(
+        { name: 'PBKDF2', salt: salt, iterations: iter, hash: 'SHA-256' },
+        material, 256
+      );
+      const raw = new Uint8Array(bits);
+      const key = await crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, ['decrypt']);
+      return { key: key, raw: raw };
+    }
+
+    async function decryptPlain(key, iv, cipher) {
+      setProgress(0.88, '解密中…');
+      return new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, cipher));
+    }
+
+    function renderGame(plainBytes) {
+      setProgress(1, '載入遊戲中…');
+      const html = new TextDecoder('utf-8').decode(plainBytes);
+      cachedCipher = null;
+      document.open();
+      document.write(html);
+      document.close();
+    }
+
+    function readStore(meta) {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        if (!raw) return null;
+        const rec = JSON.parse(raw);
+        if (!rec || rec.salt !== meta.salt || rec.iter !== meta.iter || !rec.key) return null;
+        return rec;
+      } catch (e) { return null; }
+    }
+
+    function writeStore(meta, rawKey, enabled) {
+      try {
+        if (!enabled) {
+          localStorage.removeItem(STORE_KEY);
+          return;
+        }
+        localStorage.setItem(STORE_KEY, JSON.stringify({
+          salt: meta.salt,
+          iter: meta.iter,
+          key: bytesToB64(rawKey)
+        }));
+      } catch (e) {}
+    }
+
+    async function unlockWithPassword(password, rememberOn) {
+      const meta = await loadMeta();
+      setProgress(0.04, '準備中…');
+      const salt = b64ToBytes(meta.salt);
+      const iv = b64ToBytes(meta.iv);
+      const derivedP = deriveKey(password, salt, meta.iter);
+      const cipherP = downloadCipher(meta);
+      const derived = await derivedP;
+      const cipher = await cipherP;
+      let plain;
+      try {
+        plain = await decryptPlain(derived.key, iv, cipher);
+      } catch (e) {
+        showError();
+        return;
+      }
+      writeStore(meta, derived.raw, rememberOn);
+      renderGame(plain);
+    }
+
+    async function tryStored() {
+      const meta = await loadMeta();
+      const rec = readStore(meta);
+      if (!rec) return false;
+      form.hidden = true;
+      setProgress(0.04, '準備中…');
+      try {
+        const raw = b64ToBytes(rec.key);
+        const key = await crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, ['decrypt']);
+        const iv = b64ToBytes(meta.iv);
+        const cipher = await downloadCipher(meta);
+        const plain = await decryptPlain(key, iv, cipher);
+        renderGame(plain);
+        return true;
+      } catch (e) {
+        try { localStorage.removeItem(STORE_KEY); } catch (e2) {}
+        form.hidden = false;
+        showError();
+        return true;
+      }
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      hideError();
+      const value = pwd.value;
+      if (!value) { showError(); return; }
+      btn.disabled = true;
+      pwd.disabled = true;
+      remember.disabled = true;
+      unlockWithPassword(value, remember.checked).catch(function () { showError(); });
+    });
+
+    tryStored().catch(function () { form.hidden = false; });
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+Package assembled: 2026-11-17 (Asia/Taipei)  —  DoL-SC-v8
+Built from the v7b tree (official Simplified 0.5.12.13 + ModLoader 2.101.1 + v7b mods).
+Appearance swapped back to Goose. BEEESSS overlay fully removed. No s2twp conversion.
+
+Goose Fem Vanilla 0.5.12.X v0.0.2 (img overlay, official install method):
+  https://gitgud.io/gooseslave/goose-goose-submission-compilation/-/releases/v0.0.2
+  Title: Compilation Update for 0.5.12.X, released 2026-09-22.
+  https://gitgud.io/-/project/50359/uploads/6ac3d70fa22878247414236075457ad8/Fem_Goose_-_Vanilla.zip
+  sha256 544c4ee412560f343da264bdd0ed7daaf9f209014ba2fd9b9f7814beee3d42e5
+  Freshly re-downloaded 2026-11-17; hash identical to the v7 official download.
+  Missing paths filled from GameOriginalImagePack-0.5.12.13 (not loaded as a ModLoader mod).
+  Do not use v0.0.3 (that is for 0.5.13.X) or DOLP Goose packs.
+
+deadwood-reblooms-fem-goose 0.5.12.13-v2.5.8
+  https://github.com/MaplebirchLeaf/Deadwood-Reblooms/releases/download/v2.5.8/deadwood-reblooms-fem-goose-0.5.12.13-v2.5.8.modpack
+  sha256 b4e608d89176b9b08c55a08ba350c3eddcfdebfb4a282653c282b19e06f393d4
+
+Other mods unchanged from v7b:
+  Cheat-Lyra v1.1.3, CombatStatusDisplay-Lyra v1.0.1, UCB 通用战斗美化 v1.6.1 (site098),
+  Soft & Wet 4.2.0 and plus packs, official ModI18N, no Sakura-UI, no inuno, no cheat_extended.
+
+Piercing / nipple-ring mods: NONE INCLUDED.
+Searched 2026-11-17: gitgud, GitHub, Chinese wiki 模组列表, ModHub market (dol.alseece.top
+mod-identities.json + release-index.json, 153 catalog mods), DoL-Lyra lists, DoLP feature list,
+and already-included mods (Cheat-Lyra, deadwood, ReOverfits, 露出拓展, DoLSims, Goose pack).
+Candidates and why they were skipped:
+  * iesilcut/dol-piercings-mod (https://gitgud.io/iesilcut/dol-piercings-mod):
+    Based on game 0.4.6.7, last activity 2024-04-29, author says the ModLoader zip is untested
+    and painful to update. boot.json is invalid JSON (bad escape). Sprite variant is
+    modloader_pierc_beees_paril.mod.zip (BEEESSS+Paril), not Goose. No forks.
+    Not safe or sprite-compatible for vanilla 0.5.12.13 + Goose.
+  * No other DoL piercing repo on gitgud (other 'piercing' hits are Karryn Prison / RimWorld).
+  * Chinese wiki 模组列表 and ModHub market have no 穿环 / 乳环 / piercing entry.
+  * DoLP new-features list has no standalone piercing module that can be loaded on vanilla.
+  * Included mods: no nipple-ring / body-piercing feature. Vanilla 0.5.12.13 HTML has no
+    nipple-ring item. Goose v0.0.2 only adds graphic earrings clothing sprites, not nipple rings.

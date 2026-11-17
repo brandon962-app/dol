@@ -1,0 +1,29 @@
+欲都孤儿 / Degrees of Lewdity 0.5.12.13 简体离线包使用说明（v8）
+================================================================
+
+这个文件夹已经包含游戏本体（含 ModLoader）、官方简体中文包、Goose 女体图（缺少的图已用官方图补上），
+以及 v7b 的模组组合，并把外观从 BEEESSS 换回 Goose。Sakura-UI 未安装，界面是 Soft & Wet。
+作弊是 Cheat-Lyra。标题应为「欢迎游玩欲都孤儿」。
+
+电脑（Windows）：双击 start-game.bat。若没有 Python，先安装后再试，或在本文件夹打开终端后执行：
+  python -m http.server 8000
+然后用浏览器打开 http://127.0.0.1:8000/Degrees%20of%20Lewdity.html
+
+若你拿到的是分割文件 DoL-SC-v8.zip.part01 与 part02，请先合并再解压：
+  Windows 命令提示符：copy /b DoL-SC-v8.zip.part01+DoL-SC-v8.zip.part02 DoL-SC-v8.zip
+
+这一版相对 v7b 的变化：
+- 外观：已完全移除 BEEESSS 覆盖图，改回 Goose Fem Vanilla v0.0.2（Compilation Update for 0.5.12.X，2026-09-22）。
+  安装方式与官方说明相同：把 img 覆盖到游戏目录，并用官方 0.5.12.13 图包补上 Goose 没有的文件（例如部分天空／背景）。
+  已重新加入 deadwood-reblooms-fem-goose v2.5.8。作者写明使用 Fem Goose Compilation 时要额外载入这个包。
+- 其余模组与 v7b 相同：Cheat-Lyra v1.1.3、CombatStatusDisplay-Lyra v1.0.1、通用战斗美化 UCB v1.6.1。
+  使用 UCB 时，请在「选项 > 性能」中关闭「玩家和NPC肤色的视觉表现」，否则可能出现红图或白图。
+- 未加入穿环／乳环模组。目前找不到能在原版 0.5.12.13 + ModLoader 2.101.1 上干净运行、又和 Goose 图兼容的版本。
+  详见本包 SOURCES.txt。已收录模组里也没有乳环／穿环功能（Goose 只有原版耳环类服装图）。
+
+注意事项：
+- 枯木逢春的剧情文字是简体，且作者加密打包。
+- 「基本需求」作者写明作弊系统尚未适配。
+- 存档请定期从「存档 > 导出／载入」导出。
+- Cheat-Lyra v1.1.3 有 6 处补丁成功、1 处失败：在 StoryCaption 里查找 “and $cheatsEnabled is true or $debug is 1” 未匹配。 ModHub 已说明，这常是因为枯木逢春的「作弊入口与战斗数值」已改过同一条件。
+- Goose 覆盖统计：官方图 18740，Goose 图 10402，精确覆盖 10355，仅 Goose 有 47，仍用官方图 8385。

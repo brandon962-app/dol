@@ -1,0 +1,7 @@
+这是 Degrees of Lewdity 0.5.12.13 离线简体中文包（第八版，v8）。
+游戏本体、ModLoader、简体中文包都是从官方来源下载的，没有做简体转繁体。
+外观已换回 Goose Fem Vanilla v0.0.2（0.5.12.X），并重新加入枯木逢春的 fem-goose 配套包。BEEESSS 已全部移除。
+请先在游戏文件夹开本地服务器，再用浏览器打开 http://127.0.0.1:8000/Degrees%20of%20Lewdity.html
+Windows 可直接双击 start-game.bat（需要已安装 Python）。
+不要直接双击 HTML，否则中文与模组会载入失败。
+详细步骤见「使用说明.txt」。

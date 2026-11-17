@@ -1,0 +1,1 @@
+{"v":1,"alg":"AES-GCM","kdf":"PBKDF2","hash":"SHA-256","iter":310000,"salt":"vvWnFvIQ+MTzctFVTQy1Dg==","iv":"j3cUrY1UDzbggHP9","files":["game.enc.000","game.enc.001"],"plainSize":82419876,"cipherSize":82419892}
